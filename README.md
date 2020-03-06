@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # miaosha
 
 > A Vue.js project
@@ -28,3 +29,7 @@ npm test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+=======
+# maosha
+秒杀红包等集成后台
+>>>>>>> 3b9c73f5d42a2f0cd44b2b0fe55d6c4933a3f567
