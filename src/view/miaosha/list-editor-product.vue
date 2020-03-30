@@ -13,6 +13,26 @@
       label-width="150px"
       style="width: 800px; margin-left:20px;"
     >
+      <el-form-item label="类型" prop="Title" style="width:500px">
+        <el-select
+          v-model="temp.Type"
+          placeholder="选择类型"
+          clearable
+          style="width: 150px"
+          class="filter-item"
+        >
+          <el-option v-for="item in Product" :label="item.Text" :value="item.Value" :key="item.Value"></el-option>
+        </el-select>
+        <el-select
+          v-model="temp.Difference"
+          placeholder="选择类型"
+          clearable
+          style="width: 150px"
+          class="filter-item"
+        >
+          <el-option v-for="item in Difference" :label="item.Text" :value="item.Value" :key="item.Value"></el-option>
+        </el-select>
+      </el-form-item>  
       <el-form-item label="产品名称" prop="Title" style="width:500px">
         <el-input v-model="temp.Title" style="width: 250px;" placeholder="请填写产品名称" />
       </el-form-item>
@@ -53,8 +73,11 @@
       <el-form-item label="实付价格" prop="Pay">
         <el-input v-model="temp.Pay" style="width: 150px;" placeholder="请填写实付价格" />
       </el-form-item>
+      <el-form-item label="描述" prop="Desc" style="width:800px">
+          <el-input type="textarea" v-model="temp.Desc" placeholder="请填写描述" />
+      </el-form-item>
       <div>
-        <el-form-item label="描述" prop="Contents" style="width:800px">
+        <el-form-item label="详情" prop="Contents" style="width:800px">
           <el-input v-model="temp.Contents" placeholder="请填写描述" />
           <!-- <textarea id="myEditor" style="width:100%;"></textarea> -->
         </el-form-item>
@@ -83,9 +106,14 @@ export default {
         Balance:'',
         Price:'',
         Pay:'',
+        Desc:'',//描述
+        Type:'',//类型
+        Difference:'',
       },
       editor: null,
       rules: {
+        Type: [{ required: true, message: "选择类型！", trigger: "blur" }],
+        Difference: [{ required: true, message: "选择类型！", trigger: "blur" }],
         Contents: [
           { required: true, message: "详情必须填写！", trigger: "blur" }
         ],        
@@ -105,11 +133,17 @@ export default {
           { required: true, message: "产品图片必须上传！", trigger: "change" }
         ],
         Images: [{ required: true, message: "产品主图必须上传！", trigger: "blur" }],
+        Desc: [
+          { required: true, message: "描述必须填写！", trigger: "change" }
+        ],
       },
+      Difference:[],
+      Product:[]
     };
   },
   created() {
     this.temp.Id = this.$route.query.id;
+    this.getdll();
   },
   mounted() {
     // UE.delEditor("myEditor");
@@ -168,7 +202,19 @@ export default {
     //销毁后，第一次和切换路由后都能加载出来
     // this.editor.destroy();
   },
-  methods: {
+  methods: {    
+    getdll(){
+      request({
+        url: "AProduct/DDL",
+        method: "get",
+        params: {}
+      }).then(response => {
+        if (response.Status == 1) {
+          this.Product=response.Product;
+          this.Difference=response.Difference;
+        }
+      });
+    },
     getdata() {
       request({
         url: "AProduct/GetAProduct",
@@ -179,13 +225,15 @@ export default {
           this.temp.Title = response.Model.Title;
           this.temp.Cover = response.Model.Cover;
           this.temp.Images = response.Model.Images;
-          this.temp.Contents = response.Model.Contents;
-          
+          this.temp.Contents = response.Model.Contents;          
           this.temp.Activity = response.Model.Activity;
           this.temp.Num = response.Model.Num;
           this.temp.Balance = response.Model.Balance;
           this.temp.Price = response.Model.Price;
           this.temp.Pay = response.Model.Pay;
+          this.temp.Desc = response.Model.Desc;
+          this.temp.Type = response.Model.Type.toString();
+          this.temp.Difference = response.Model.Difference.toString();
           // this.editor.ready(() => {
           //   this.editor.setContent(response.Model.Contents);
           // });
@@ -225,7 +273,10 @@ export default {
       this.temp.Num = '';
       this.temp.Balance = '';
       this.temp.Price = '';
-      this.temp.Pay = '';
+      this.temp.Pay = '';      
+      this.temp.Desc = '';
+      this.temp.Type = '';
+      this.temp.Difference = '';
       this.$router.go(-1);
     },
     createData() {      

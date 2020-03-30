@@ -13,6 +13,27 @@
       label-width="150px"
       style="width: 800px; margin-left:20px;"
     >
+         
+      <el-form-item label="类型" prop="Title" style="width:500px">
+        <el-select
+          v-model="temp.Type"
+          placeholder="选择类型"
+          clearable
+          style="width: 150px"
+          class="filter-item"
+        >
+          <el-option v-for="item in Product" :label="item.Text" :value="item.Value" :key="item.Value"></el-option>
+        </el-select>
+        <el-select
+          v-model="temp.Difference"
+          placeholder="选择类型"
+          clearable
+          style="width: 150px"
+          class="filter-item"
+        >
+          <el-option v-for="item in Difference" :label="item.Text" :value="item.Value" :key="item.Value"></el-option>
+        </el-select>
+      </el-form-item>  
       <el-form-item label="产品名称" prop="Title" style="width:500px">
         <el-input v-model="temp.Title" placeholder="请填写产品名称" />
       </el-form-item>
@@ -44,9 +65,12 @@
         </el-upload>
         <div class="chicun">尺寸：170*170</div>
       </el-form-item>
+        <el-form-item label="描述" prop="Desc" style="width:800px">
+          <el-input type="textarea" v-model="temp.Desc" placeholder="请填写描述" />
+        </el-form-item>
       <div>
-        <el-form-item label="描述" prop="Contents" style="width:800px">
-          <el-input v-model="temp.Contents" placeholder="请填写跳转连接" />
+        <el-form-item label="详情" prop="Contents" style="width:800px">
+          <el-input v-model="temp.Contents" placeholder="请填写详情" />
           <!-- <textarea id="myEditor" style="width:100%;"></textarea> -->
         </el-form-item>
       </div>
@@ -75,9 +99,14 @@ export default {
         Cover: "", //活动图片
         Images: "", //主图
         Contents: "", //详情
+        Desc:'',//描述
+        Type:'',//类型
+        Difference:'',
       },
       editor: null,
       rules: {
+        Type: [{ required: true, message: "选择类型！", trigger: "blur" }],
+        Difference: [{ required: true, message: "选择类型！", trigger: "blur" }],
         Title: [
           { required: true, message: "产品名称必须填写！", trigger: "blur" }
         ],
@@ -88,11 +117,17 @@ export default {
         Contents: [
           { required: true, message: "详情必须填写！", trigger: "blur" }
         ],
+        Desc: [
+          { required: true, message: "描述必须填写！", trigger: "change" }
+        ],
       },
+      Difference:[],
+      Product:[]
     };
   },
   created() {
     this.temp.Id = this.$route.query.id;
+    this.getdll();
   },
   mounted() {
     // UE.delEditor("myEditor");
@@ -152,6 +187,18 @@ export default {
     // this.editor.destroy();
   },
   methods: {
+    getdll(){
+      request({
+        url: "AProduct/DDL",
+        method: "get",
+        params: {}
+      }).then(response => {
+        if (response.Status == 1) {
+          this.Product=response.Product;
+          this.Difference=response.Difference;
+        }
+      });
+    },
     getdata() {
       request({
         url: "Product/GetProduct",
@@ -163,6 +210,9 @@ export default {
           this.temp.Cover = response.Model.Cover;
           this.temp.Images = response.Model.Images;
           this.temp.Contents = response.Model.Contents;
+          this.temp.Desc = response.Model.Desc;
+          this.temp.Type = response.Model.Type.toString();
+          this.temp.Difference = response.Model.Difference.toString();
           // this.editor.ready(() => {
           //   this.editor.setContent(response.Model.Contents);
           // });
@@ -198,6 +248,9 @@ export default {
       this.temp.Cover = '';
       this.temp.Images = '';
       this.temp.Contents = '';
+      this.temp.Desc = '';
+      this.temp.Type = '';
+      this.temp.Difference = '';
       this.$router.go(-1);
     },
     createData() {

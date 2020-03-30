@@ -31,6 +31,9 @@
           <el-button size="mini" type="danger" @click="handledel(scope.row)" v-if="AStatus==0">
             <i class="el-icon-delete"></i>
           </el-button>
+          <el-button size="mini" type="primary"  @click="handleup(scope.row)" v-if="scope.row.Difference==3 &&scope.row.Type==1 || scope.row.Difference==2 &&scope.row.Type==1">
+            上传卡密（{{scope.row.Counts}}）
+          </el-button>
         </template>
       </el-table-column>
     </el-table> 
@@ -69,11 +72,43 @@
           </el-form-item>
           <el-form-item label="实付价格" prop="Pay">
             <el-input v-model="temp.Pay" style="width: 150px;" placeholder="请填写实付价格" />
-          </el-form-item>
+          </el-form-item>     
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="createData">确定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="上传文件" :visible.sync="dialogkamiVisible" :close-on-click-modal="false" width="650px">
+      <el-form
+        ref="datawuliu"
+        :rules="ruleswuliu"
+        :model="temp1"
+        label-position="left"
+        label-width="100px"
+        style="width: 350px; margin-left:50px;"
+      >        
+        <el-button size="mini" type="danger" @click="delkami()" style="margin-bottom:20px">
+            <i class="el-icon-delete"></i> 删除卡密
+          </el-button>
+        <el-form-item label="文件上传" prop="filepath">          
+          <el-upload
+              class="upload-demo"
+              drag
+              ref="upload"
+              accept=".xls,.xlsx"
+              action=""
+              :http-request="upLoad"
+              >
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+              <div class="el-upload__tip" slot="tip">只能上传xls文件</div>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogkamiVisible = false">取消</el-button>
+        <el-button type="primary" @click="subwuliu">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -82,6 +117,8 @@
 import request from "@/utils/request";
 
 import Pagination from "@/components/Pagination";
+
+import upfile from '@/utils/upload';
 export default {
   name: "renwu",
   components: { Pagination },
@@ -93,6 +130,7 @@ export default {
       total:0,
       checked:'',
       AStatus:'',
+      dialogkamiVisible:false,
       temp:{
         Id:0,
         Activity:'',
@@ -104,6 +142,14 @@ export default {
         Balance:'',
         Price:'',
         Pay:'',
+        Type:'',
+        Difference:'',
+        Desc:''
+      },
+      temp1:{
+        apid:0,
+        filepath:'',
+        type:''
       },
       listQuery:{
         title:'',
@@ -130,7 +176,12 @@ export default {
           { required: true, message: "产品图片必须上传！", trigger: "change" }
         ],
         Images: [{ required: true, message: "产品主图必须上传！", trigger: "blur" }],
-      },   
+      },      
+      ruleswuliu:{  
+        filepath: [
+          { required: true, message: "请上传文件！", trigger: "blur" }
+        ]
+      }   
     };
   },
   created() {
@@ -190,6 +241,9 @@ export default {
       this.temp.Num='';
       this.temp.Price='';
       this.temp.Pay='';
+      this.temp.Type='';
+      this.temp.Difference='';
+      this.temp.Desc='';
       this.iscreate=true;
       this.$nextTick(() => {
         this.$refs["dataForm"].clearValidate();
@@ -235,6 +289,9 @@ export default {
           this.temp.Cover=this.list[i].Cover;
           this.temp.Images=this.list[i].Images;
           this.temp.Contents=this.list[i].Contents;
+          this.temp.Type=this.list[i].Type;
+          this.temp.Difference=this.list[i].Difference;
+          this.temp.Desc=this.list[i].Desc;
         }
       }
       this.$refs["dataForm"].validate(valid => {
@@ -262,13 +319,86 @@ export default {
                 Balance:this.temp.Balance,
                 Price:this.temp.Price,
                 Pay:this.temp.Pay,
+                Type:this.temp.Type,
+                Difference:this.temp.Difference,
+                Desc:this.temp.Desc
+
               }
               this.renwulist.push(param);
             }            
           });
         }
       });
-    },
+    },    
+    handleup(row){
+      this.dialogkamiVisible=true;
+      this.temp1.apid=row.Id;
+      this.temp1.filepath='';
+      this.temp1.type=row.Difference;
+      this.$nextTick(() => {
+        this.$refs["datawuliu"].clearValidate();
+      });
+    }, 
+    upLoad(param){
+      upfile(param.file,'Upload/UploadFile',(data => {
+          if(data.Status){
+              this.temp1.filepath=data.Path;
+          }else{
+              this.$message({
+                message: data.Msg,
+                type: "error"
+            });
+          };
+      }))
+    },     
+    subwuliu(){
+      this.$refs["datawuliu"].validate(valid => {
+        if (valid) { 
+          var param={
+              filepath:this.temp1.filepath,
+              apid:this.temp1.apid,
+              type:this.temp1.type==2?0:1
+          };  
+          var data = this.$qs.stringify(param);
+          request({
+            url: "AProduct/UploadQM",
+            method: "post",
+            data
+          }).then(response => {
+            if (response.Status==1) {
+              this.dialogkamiVisible = false;
+              this.$message({
+                message: response.Msg,
+                type: "success"
+              });
+            }
+          });
+        }
+      });
+    }, 
+    delkami(){
+      var data = this.$qs.stringify({ apid: this.temp1.apid});
+      this.$confirm("确定要删除卡密吗？", "提示", {
+        dangerouslyUseHTMLString: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      })
+        .then(() => {
+          request({
+            url: "AProduct/DelCode",
+            method: "post",
+            data
+          }).then(response => {
+            if (response.Status==1) {
+              this.$message({
+                message: response.Msg,
+                type: "success"
+              });
+            }
+          });
+        })
+        .catch(() => {});
+    }
   }
 };
 </script>

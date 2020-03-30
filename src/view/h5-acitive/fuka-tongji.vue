@@ -1,6 +1,6 @@
 <template>
   <div class="tongjilist boxright">
-    <div class="filter-container">
+    <div class="filter-container red">
       <span v-for="item in typearr" v-text="settext(item)"></span>
    
     </div>
@@ -85,5 +85,5 @@ export default {
 </script>
 <style lang="scss" rel="stylesheet/scss">
 .tongjilist span {color: #f00;}
-.tongjilist .filter-container span{padding-right: 20px;}
+.tongjilist .red span{padding-right: 20px;}
 </style>

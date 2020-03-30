@@ -101,6 +101,16 @@
             active-text="是"
             inactive-text="否">
           </el-switch>
+        </el-form-item>                
+        <el-form-item label="备注信息" prop="ARId">
+          <el-select
+            v-model="temp.ARId"
+            placeholder="选择备注信息"
+            clearable
+            style="width:400px"
+          >
+            <el-option v-for="item in marklist" :label="item.Contents" :value="item.Id" :key="item.Id"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -136,7 +146,8 @@ export default {
         StartTime:'',//开始时间
         Deadline:'',//结束时间
         Name:'',//名称
-        IsMission:false
+        IsMission:false,
+        ARId:''
       },
       value:'',
       total:0,
@@ -160,6 +171,7 @@ export default {
           { required: true, message: "是否有任务必须选择！", trigger: "blur" }
         ],
       },   
+      marklist:[]
     };
   },
   created() {
@@ -178,6 +190,17 @@ export default {
     }
   },
   methods: {
+    getmark(){
+      request({
+        url: "ARemarks/GetRemarksAllList",
+        method: "get",
+        params:{}
+      }).then(response => {
+        if (response.Status==1) {    
+          this.marklist=response.List;
+        }            
+      });
+    },
     setstatus(code){
       for(let i in this.Model){
         if(this.Model[i].Value == code){
@@ -248,6 +271,7 @@ export default {
       });
     },
     linktoadd(row){
+      this.getmark();
       if(row==0){
         this.titles='增加活动';
         this.temp.Id=0;
@@ -255,6 +279,7 @@ export default {
         this.temp.StartTime='';
         this.temp.Deadline='';
         this.temp.IsMission=false;
+        this.temp.ARId='';
         this.iscreat=true;
       }else{
         this.titles='修改活动';
@@ -263,6 +288,7 @@ export default {
         this.value=[new Date(row.StartTimeStr),new Date(row.DeadlineStr)];
         this.temp.StartTime=row.StartTimeStr;
         this.temp.Deadline=row.DeadlineStr;
+        this.temp.ARId=row.ARId;
         this.temp.IsMission=row.IsMission==0?false:true;
         this.iscreat=false;
       };
@@ -307,7 +333,8 @@ export default {
         Name:this.temp.Name,
         StartTime:this.temp.StartTime,
         Deadline:this.temp.Deadline,
-        IsMission:Mission
+        IsMission:Mission,
+        ARId:this.temp.ARId
       }
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
@@ -325,6 +352,7 @@ export default {
                   StartTimeStr:this.temp.StartTime,
                   DeadlineStr:this.temp.Deadline,
                   IsMission:Mission,
+                  ARId:this.temp.ARId,
                   PV:0,
                   UV:0,
                   Status:0
@@ -336,6 +364,7 @@ export default {
                     this.list[i].Name=this.temp.Name;
                     this.list[i].StartTimeStr=this.temp.StartTime;
                     this.list[i].DeadlineStr=this.temp.Deadline;
+                    this.list[i].ARId=this.temp.ARId;
                     this.list[i].IsMission=Mission;
                     break;
                   }  

@@ -112,5 +112,4 @@ export default {
 };
 </script>
 <style lang="scss" rel="stylesheet/scss">
-.tongji span {color: #f00;}
 </style>

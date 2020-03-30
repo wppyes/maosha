@@ -16,6 +16,11 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>   
     </div>
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row>
+      <el-table-column label="产品类型" align="center">
+        <template slot-scope="scope">
+          {{scope.row.TypeStr+'--'+scope.row.DifferenceStr}}
+        </template>
+      </el-table-column>
       <el-table-column label="产品名称" align="left" prop="Title"></el-table-column>
       <el-table-column label="封面图" align="center">
         <template slot-scope="scope">
@@ -75,6 +80,8 @@ export default {
         pageIndex: 1,
         pageSize: 15
       },
+      Difference:[],
+      Product:[]
     };
   },
   created() {
@@ -86,13 +93,6 @@ export default {
     })
   },
   methods: {
-    setliexing(type){
-      for(let i in this.Model){
-        if(this.Model[i].Value == type){
-          return this.Model[i].Text;
-        }
-      }
-    },
     getList(){
       this.listLoading = true;
       request({

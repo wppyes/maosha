@@ -107,6 +107,20 @@ const miaoshaRouter = {
         title: '数据统计'
       }
     },
+    {
+      path: 'maoshu',
+      component: () => import('@/view/miaosha/maoshu'),
+      meta: {
+        title: '描述设置'
+      }
+    },
+    {
+      path: 'order-xuni',
+      component: () => import('@/view/miaosha/order-xuni'),
+      meta: {
+        title: '虚拟订单列表'
+      }
+    },
   ]
 }
 export default miaoshaRouter
