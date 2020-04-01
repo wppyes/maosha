@@ -5,7 +5,7 @@
         <i class="el-icon-arrow-left"></i>返回
       </span>
     </div>
-    <div class="filter-container" v-if="AStatus==0">
+    <div class="filter-container" v-if="AStatus==0 || Role==1">
       <div class="filter-item" style="margin-right:20px;">
         <el-button type="primary" @click="handleadd">
           <i class="el-icon-circle-plus"></i> 增加任务
@@ -19,10 +19,10 @@
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="linktoeditor(scope.row)" v-if="AStatus==0">
+          <el-button size="mini" type="primary" @click="linktoeditor(scope.row)" v-if="AStatus==0 || Role==1">
             <i class="el-icon-edit"></i>
           </el-button>
-          <el-button size="mini" type="danger" @click="handledel(scope.row)" v-if="AStatus==0">
+          <el-button size="mini" type="danger" @click="handledel(scope.row)" v-if="AStatus==0 || Role==1">
             <i class="el-icon-delete"></i>
           </el-button>
         </template>
@@ -72,6 +72,7 @@ export default {
       list:[],
       iscreate:false,
       renwulist:[],
+      Role:0,
       rules: {
         Count: [
           { required: true, message: "任务指标必须填写！", trigger: "blur" }
@@ -103,7 +104,8 @@ export default {
         if (response.Status==1) {   
           this.renwulist=response.List;   
           this.listLoading1=false;
-          this.AStatus=response.AStatus;
+          this.AStatus=response.AStatus;          
+          this.Role=response.Role;
         }            
       });
     },

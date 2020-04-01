@@ -5,7 +5,7 @@
         <i class="el-icon-arrow-left"></i>返回
       </span>
     </div>
-    <div class="filter-container" v-if="AStatus==0">
+    <div class="filter-container" v-if="AStatus==0 || Role==1">
       <div class="filter-item" style="margin-right:20px;">
         <el-button type="primary" @click="handleadd">
           <i class="el-icon-circle-plus"></i> 增加产品
@@ -22,13 +22,23 @@
       <el-table-column label="原价" align="center" prop="Price" width="100px"></el-table-column>
       </el-table-column>
       <el-table-column label="实付价格" align="center" prop="Pay" width="100px"></el-table-column>
+      </el-table-column>     
+      <el-table-column label="排序" width="170px" align="center">
+         <template slot-scope="scope">
+          <span @click="sort(scope.row,scope.$index,-1)" :class="scope.$index==0?'disabled':''">  
+          <i class="fa fa-arrow-up"></i>上移  
+          </span>&nbsp;&nbsp;&nbsp;  
+          <span @click="sort(scope.row,scope.$index,+1)" :class="scope.$index==list.length-1?'disabled':''">  
+          <i class="fa fa-arrow-down"></i>下移  
+          </span> 
+        </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="linktoeditor(scope.row)" v-if="AStatus==0">
+          <el-button size="mini" type="primary" @click="linktoeditor(scope.row)" v-if="AStatus==0 || Role==1">
             <i class="el-icon-edit"></i>
           </el-button>
-          <el-button size="mini" type="danger" @click="handledel(scope.row)" v-if="AStatus==0">
+          <el-button size="mini" type="danger" @click="handledel(scope.row)" v-if="AStatus==0 || Role==1">
             <i class="el-icon-delete"></i>
           </el-button>
           <el-button size="mini" type="primary"  @click="handleup(scope.row)" v-if="scope.row.Difference==3 &&scope.row.Type==1 || scope.row.Difference==2 &&scope.row.Type==1">
@@ -131,6 +141,7 @@ export default {
       checked:'',
       AStatus:'',
       dialogkamiVisible:false,
+      flag:true,
       temp:{
         Id:0,
         Activity:'',
@@ -159,6 +170,7 @@ export default {
       list:[],
       iscreate:false,
       renwulist:[],
+      Role:0,
       rules: {
         Title: [
           { required: true, message: "产品名称必须填写！", trigger: "blur" }
@@ -208,6 +220,7 @@ export default {
         if (response.Status==1) {   
           this.renwulist=response.List;   
           this.AStatus=response.AStatus;
+          this.Role=response.Role;
           this.listLoading1=false;
         }            
       });
@@ -229,6 +242,32 @@ export default {
     handleFilter() {
       this.listQuery.pageIndex = 1;
       this.getdata();
+    },
+    sort: function (item, index, type) {//使用方法：传递当前数组的item,index下标,-1为上移，+1为下移 
+        this.setup(item, index, type,this.renwulist);
+    },
+    setup: function (item, index, type, arr1) {
+        if (!this.flag) {
+            return;
+        }
+        this.flag = false;
+        if ((type < 0 && index == 0) || (type > 0 && index == arr1.length - 1)) {
+            return;
+        }; 
+        var temp = arr1[index];        
+        var id1 = item.Id, id2 = arr1[index + type].Id;//当前id为 id1,替换id为id2
+        var data=this.$qs.stringify({id1: id1, id2: id2,});
+        request({
+          url: "AProduct/Sort",
+          method: "post",
+          data
+        }).then(response => {
+          if(response.Status==1){              
+            this.$set(arr1, index, arr1[index + type]);
+            this.$set(arr1, index + type, temp);
+          }
+          this.flag = true;
+        });
     },  
     handleadd(){
       this.titles='新增产品';
@@ -412,5 +451,7 @@ export default {
     }
     .el-radio.is-bordered+.el-radio.is-bordered{margin-left: 0;}
     .el-radio.is-bordered{margin-bottom: 10px;}
+    .el-table__body-wrapper .disabled{color: #C0C4CC;}
+    .el-table__body-wrapper span{cursor: pointer;}
   }
 </style>

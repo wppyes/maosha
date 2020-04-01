@@ -102,7 +102,7 @@
             inactive-text="否">
           </el-switch>
         </el-form-item>                
-        <el-form-item label="备注信息" prop="ARId">
+        <el-form-item label="备注信息" prop="ARId" v-show="temp.IsMission">
           <el-select
             v-model="temp.ARId"
             placeholder="选择备注信息"
@@ -328,6 +328,9 @@ export default {
     },
     createData(){      
       let Mission=this.temp.IsMission?1:0;
+      if(!this.temp.IsMission){
+        this.temp.ARId=0;
+      }
       let subdata={
         Id:this.temp.Id,
         Name:this.temp.Name,
