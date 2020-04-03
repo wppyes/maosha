@@ -38,12 +38,31 @@
       >
         <el-option v-for="item in Model" :label="item.Text" :value="item.Value" :key="item.Value"></el-option>
       </el-select>
+        <el-date-picker
+        class="filter-item"
+        v-model="value7"
+        type="daterange"
+        align="left"
+        unlink-panels
+        range-separator="-"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        value-format="yyyy-MM-dd"
+      ></el-date-picker>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+      
+      <el-button
+        :loading="downloadLoading"
+        class="filter-item"
+        type="primary"
+        icon="el-icon-download"
+        @click="handleDownload"
+      >下载订单</el-button>
     </div>
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row>
-      <el-table-column label="订单编号" align="left" prop="PayOrderNum">
+      <el-table-column label="编号" align="left" prop="PayOrderNum">
         <template slot-scope="scope">
-         内部：{{scope.row.OrderNum}}<br/>银行：{{scope.row.PayOrderNum}}
+         UserId：{{scope.row.UserId}}<br/>内部：{{scope.row.OrderNum}}<br/>银行：{{scope.row.PayOrderNum}}
         </template>
       </el-table-column>
       <el-table-column label="产品名称" align="left" prop="Title"></el-table-column>
@@ -122,6 +141,8 @@ export default {
       listLoading: false, //列表加载
       dialogwuliu: false,
       dialogdingdan:false,
+      value7:'',
+      downloadLoading:false,
       listQuery: {
         //搜素分页处理
         name: "",
@@ -130,7 +151,9 @@ export default {
         ordernum: "",
         userid: "",
         productname: "",
-        status: ""
+        status: "",        
+        starttime:'',
+        endtime:''
       },
       item:{},
 
@@ -146,6 +169,51 @@ export default {
     });
   },
   methods: {
+    handleDownload(){
+      this.downloadLoading = true;
+      this.$confirm("确定要下载订单吗？", '提示', {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(() => {
+          console.log(1);
+          request({
+            url: "Orders/GetOrderExcel",
+            method: "get",
+            params: {name:this.listQuery.name,
+                      ordernum:this.listQuery.ordernum,
+                      userid:this.listQuery.userid,
+                      productname:this.listQuery.productname,
+                      status:this.listQuery.status,
+                      starttime:this.listQuery.starttime,
+                      endtime:this.listQuery.endtime}
+          }).then(response => {
+              if(response.Status==1){
+                import('@/vendor/Export2Excel').then(excel => {
+                  const tHeader = response.TableTitle;
+                  const filterVal = response.TableField;
+                  const data = this.formatJson(filterVal, response.List)
+                  if(response.List){
+                    excel.export_json_to_excel({
+                      header: tHeader,
+                      data,
+                      filename: '订单'
+                    });
+                  }
+                
+              }); 
+              this.downloadLoading = false
+            }          
+          });          
+        }).catch(() => {   
+          this.downloadLoading = false      
+        });
+    }, 
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+          return v[j]
+      }))
+    },
     detail(row) {      
       this.titles=row.Name+'的订单详情';
       this.dialogdingdan=true;

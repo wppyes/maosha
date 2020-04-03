@@ -15,7 +15,7 @@
       </el-table-column>
       <el-table-column label="查看任务" align="center" prop="UV">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="renwu(scope.row)">
+          <el-button size="mini" type="primary" @click="renwu(scope.row)" v-if="scope.row.IsMission!=0">
             任务
           </el-button>
         </template>
@@ -39,12 +39,18 @@
     <el-dialog title="产品" :visible.sync="chanpinshow" :close-on-click-modal="false" width="800px">
       <el-table :data="rows.ProductList" border fit highlight-current-row>
         <el-table-column label="名称" align="left" prop="Title"></el-table-column>
-        <el-table-column label="原价" align="center" prop="Price" width="80px"></el-table-column>
-        <el-table-column label="实付" align="center" prop="Pay" width="80px"></el-table-column>
-        <el-table-column label="库存" align="center" prop="Num" width="80px"></el-table-column>
-        <el-table-column label="剩余库存" align="center" prop="Balance" width="80px"></el-table-column>
-        <el-table-column label="销量" align="center" prop="Counts" width="80px"></el-table-column>
+        <el-table-column label="原价/元" align="center" prop="Price" width="80px"></el-table-column>
+        <el-table-column label="实付/元" align="center" prop="Pay" width="80px"></el-table-column>
+        <el-table-column label="库存/件" align="center" prop="Num" width="80px"></el-table-column>
+        <el-table-column label="剩余库存/件" align="center" prop="Balance" width="120px">
+          <template slot-scope="scope">
+          <span  :class="scope.row.Balance>0?'red':''">{{scope.row.Balance}}</span>
+        </template>
+        </el-table-column>
+        <el-table-column label="销量/件" align="center" prop="Counts" width="110px"></el-table-column>
         <el-table-column label="总金额" align="center" prop="Sum" width="80px"></el-table-column>
+        <el-table-column label="UV" align="center" prop="ProductUV" width="80px"></el-table-column>
+
       </el-table>
     </el-dialog>
   </div>
@@ -67,7 +73,7 @@ export default {
       },
       dialogVisible:false,
       chanpinshow:false,
-      rows:{}
+      rows:{},
     };
   },
   created() {
@@ -110,7 +116,7 @@ export default {
   .status3 {
     color: #f56c6c;
   }
-  .red{padding-left: 10px; color: #f00;}
+  .red{color: #f00;}
   .status0 {
     color: #67c23a;
   }

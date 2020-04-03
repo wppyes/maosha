@@ -39,7 +39,7 @@
         </div>
         <el-form-item label="选择地址" prop="AId"> 
          <el-radio-group v-model="temp.AId" size="small">
-            <el-radio v-for="item in dizhilist" :label="item.Id" border>{{item.Name}}-{{item.Phone}}-{{item.Province}}{{item.City}}{{item.Area}}{{item.Address}}</el-radio>
+            <el-radio v-for="item in dizhilist" :key="item.Id" :label="item.Id" border>{{item.Name}}-{{item.Phone}}-{{item.Province}}{{item.City}}{{item.Area}}{{item.Address}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="活动时间" prop="time">          

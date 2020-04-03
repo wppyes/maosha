@@ -32,10 +32,6 @@
           {{scope.row.StartTimeStr}} - {{scope.row.DeadlineStr}}
         </template>
       </el-table-column>
-      <el-table-column label="PV" width="80px" align="center" prop="PV"></el-table-column>
-      </el-table-column>
-      <el-table-column label="UV" width="80px" align="center" prop="UV"></el-table-column>
-      </el-table-column>
       <el-table-column label="状态" align="center" prop="Status" width="100px">
          <template slot-scope="scope">
           <span v-text="setstatus(scope.row.Status)" :class="'status'+scope.row.Status"></span>
