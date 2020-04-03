@@ -65,12 +65,18 @@
          UserId：{{scope.row.UserId}}<br/>内部：{{scope.row.OrderNum}}<br/>银行：{{scope.row.PayOrderNum}}
         </template>
       </el-table-column>
-      <el-table-column label="产品名称" align="left" prop="Title"></el-table-column>
+      <el-table-column label="活动/产品" align="left" prop="Title">
+        <template slot-scope="scope">
+          <span class="status2">活动：{{scope.row.ActivityName}}</span>
+         <br/>产品：{{scope.row.Title}}
+        </template>
+      </el-table-column>
       <el-table-column label="支付金额" align="center" prop="PayAmount" width="80px"></el-table-column>
-      <el-table-column label="收货信息" align="center" width="200px">
-        <template slot-scope="scope">{{scope.row.Name+' '+scope.row.Phone}}</template>
+      <el-table-column label="收货信息" align="center" width="120px">
+        <template slot-scope="scope">{{scope.row.Name}}<br/>{{scope.row.Phone}}</template>
       </el-table-column>
       <el-table-column label="运单编号" align="center" prop="LogisticCode" width="150px"></el-table-column>
+      <el-table-column label="时间" align="center" prop="CreatedStr" width="190px"></el-table-column>
       <el-table-column label="状态" align="center" prop="Status" width="80px">
         <template slot-scope="scope">
           <span :class="'status'+scope.row.Status" v-text="setliexing(scope.row.Status)"></span>
@@ -91,13 +97,12 @@
 
     <pagination
       small
-      layout="prev, pager, next"
+      layout="total,prev, pager, next"
       :total="total"
       :page.sync="listQuery.pageIndex"
       :limit.sync="listQuery.pageSize"
       @pagination="getList"
     />
-
     <el-dialog :title="titles" :visible.sync="dialogwuliu" :close-on-click-modal="false" width="700px">
       <ul>
         <li>运单编号：{{item.LogisticCode}}</li>
@@ -167,6 +172,17 @@ export default {
     this.$bus.$on("navactivechange", () => {
       this.getList();
     });
+  },
+  watch: {
+    value7(val, oldval) {
+      if(val){
+        this.listQuery.starttime = val[0];
+        this.listQuery.endtime = val[1];
+      }else{
+        this.listQuery.starttime='';
+        this.listQuery.endtime='';
+      }
+    }
   },
   methods: {
     handleDownload(){
