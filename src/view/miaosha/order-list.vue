@@ -48,7 +48,16 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         value-format="yyyy-MM-dd"
-      ></el-date-picker>
+      ></el-date-picker>    
+      <br/>  
+      <el-autocomplete
+        class="filter-item"
+        v-model="listQuery1.name"
+        clearable
+        :fetch-suggestions="querySearch"
+        placeholder="请输入活动名称"
+        @select="handleSelect"
+      ></el-autocomplete>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
       
       <el-button
@@ -148,6 +157,12 @@ export default {
       dialogdingdan:false,
       value7:'',
       downloadLoading:false,
+      listQuery1:{
+        name: "",
+        pageIndex: 1,
+        pageSize: 100,
+        status:-1
+      },
       listQuery: {
         //搜素分页处理
         name: "",
@@ -158,7 +173,8 @@ export default {
         productname: "",
         status: "",        
         starttime:'',
-        endtime:''
+        endtime:'',
+        activityId:''
       },
       item:{},
 
@@ -185,6 +201,28 @@ export default {
     }
   },
   methods: {
+    querySearch(queryString, cb) {
+      request({
+          url: "Activity/GetActivityList",
+          method: "get",
+          params: this.listQuery1
+        }).then(response => {
+          if (response.Status == 1) {
+            for (let i = 0; i < response.List.length; i++) {
+              response.List[i].value = response.List[i].Name;    
+            }
+             cb(response.List);
+             if(queryString==''){
+                this.listQuery.activityId = '';
+                this.handleFilter();
+             }
+          }
+      });
+    },    
+    handleSelect(item) {
+      this.listQuery.activityId = item.Id;
+      this.handleFilter();
+    },
     handleDownload(){
       this.downloadLoading = true;
       this.$confirm("确定要下载订单吗？", '提示', {
@@ -200,6 +238,7 @@ export default {
                       ordernum:this.listQuery.ordernum,
                       userid:this.listQuery.userid,
                       productname:this.listQuery.productname,
+                      activityId:this.listQuery.activityId,
                       status:this.listQuery.status,
                       starttime:this.listQuery.starttime,
                       endtime:this.listQuery.endtime}
