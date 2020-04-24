@@ -77,9 +77,6 @@ export default {
       showdio:false,
       dizhilist:[],
       rules: {
-        AId: [
-          { required: true, message: "地址必须选择！", trigger: "blur" }
-        ],
         time: [
           { required: true, message: "时间必须选择！", trigger: "blur" }
         ],

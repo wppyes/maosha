@@ -63,15 +63,15 @@
           <img v-if="temp.Images" :src="temp.Images" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
-        <div class="chicun">尺寸：170*170</div>
+        <div class="chicun">尺寸：460*460</div>
       </el-form-item>
         <el-form-item label="描述" prop="Desc" style="width:800px">
           <el-input type="textarea" v-model="temp.Desc" placeholder="请填写描述" />
         </el-form-item>
       <div>
         <el-form-item label="详情" prop="Contents" style="width:800px">
-          <el-input v-model="temp.Contents" placeholder="请填写详情" />
-          <!-- <textarea id="myEditor" style="width:100%;"></textarea> -->
+          <!-- <el-input v-model="temp.Contents" placeholder="请填写详情" /> -->
+          <textarea id="myEditor" style="width:100%;"></textarea>
         </el-form-item>
       </div>
     </el-form>
@@ -130,47 +130,47 @@ export default {
     this.getdll();
   },
   mounted() {
-    // UE.delEditor("myEditor");
-    // this.editor = UE.getEditor("myEditor", {
-    //   toolbars: [
-    //     [
-    //       "fullscreen",
-    //       "source",
-    //       "|",
-    //       "undo",
-    //       "redo",
-    //       "|",
-    //       "bold",
-    //       "italic",
-    //       "underline",
-    //       "fontborder",
-    //       "fontfamily",
-    //       "fontsize",
-    //       "strikethrough",
-    //       "|",
-    //       "superscript",
-    //       "subscript",
-    //       "removeformat",
-    //       "formatmatch",
-    //       "autotypeset",
-    //       "blockquote",
-    //       "pasteplain",
-    //       "|",
-    //       "forecolor",
-    //       "backcolor",
-    //       ,
-    //       "simpleupload",
-    //       "insertimage",
-    //       "|",
-    //       "justifyleft",
-    //       "justifyright",
-    //       "justifycenter",
-    //       "justifyjustify",
-    //       "cleardoc"
-    //     ]
-    //   ],
-    //   initialFrameHeight: 400
-    // });
+    UE.delEditor("myEditor");
+    this.editor = UE.getEditor("myEditor", {
+      toolbars: [
+        [
+          "fullscreen",
+          "source",
+          "|",
+          "undo",
+          "redo",
+          "|",
+          "bold",
+          "italic",
+          "underline",
+          "fontborder",
+          "fontfamily",
+          "fontsize",
+          "strikethrough",
+          "|",
+          "superscript",
+          "subscript",
+          "removeformat",
+          "formatmatch",
+          "autotypeset",
+          "blockquote",
+          "pasteplain",
+          "|",
+          "forecolor",
+          "backcolor",
+          ,
+          "simpleupload",
+          "insertimage",
+          "|",
+          "justifyleft",
+          "justifyright",
+          "justifycenter",
+          "justifyjustify",
+          "cleardoc"
+        ]
+      ],
+      initialFrameHeight: 400
+    });
     
   },
   activated () {
@@ -184,7 +184,7 @@ export default {
 　},
   destroyed() {
     //销毁后，第一次和切换路由后都能加载出来
-    // this.editor.destroy();
+    this.editor.destroy();
   },
   methods: {
     getdll(){
@@ -213,9 +213,9 @@ export default {
           this.temp.Desc = response.Model.Desc;
           this.temp.Type = response.Model.Type.toString();
           this.temp.Difference = response.Model.Difference.toString();
-          // this.editor.ready(() => {
-          //   this.editor.setContent(response.Model.Contents);
-          // });
+          this.editor.ready(() => {
+            this.editor.setContent(response.Model.Contents);
+          });
         }
       });
     },
@@ -254,7 +254,7 @@ export default {
       this.$router.go(-1);
     },
     createData() {
-      // this.temp.Contents = this.editor.getContent();
+      this.temp.Contents = this.editor.getContent();
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           var data = this.$qs.stringify(this.temp);

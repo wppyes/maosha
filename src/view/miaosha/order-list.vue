@@ -167,7 +167,7 @@ export default {
         //搜素分页处理
         name: "",
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 6,
         ordernum: "",
         userid: "",
         productname: "",
