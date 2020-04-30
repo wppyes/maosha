@@ -9,6 +9,7 @@
           @click="handleDownload"
         >下载模板</el-button>
       <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleup">批量设置物流</el-button>   
+      <div class="filter-item text-red">物流格式，备注【订单编号，物流单号】</div>
     </div>
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row>
       <el-table-column label="奖品" align="left" prop="Title"></el-table-column>
@@ -353,4 +354,5 @@ export default {
 <style lang="scss" rel="stylesheet/scss">
 .prizeset .wuliuinfo li{list-style: none; line-height:22px; margin-bottom: 10px; display: flex;}
 .prizeset .wuliuinfo span{color: #999; margin-right: 10px; width: 145px;}
+.prizeset .text-red{margin-left: 20px; color: #f00;}
 </style>
