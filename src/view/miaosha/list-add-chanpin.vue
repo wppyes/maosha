@@ -236,6 +236,7 @@ export default {
       }).then(response => {
         if (response.Status==1) {   
           this.list=response.List;  
+          this.total=response.PageCount;
         }            
       });
     },
