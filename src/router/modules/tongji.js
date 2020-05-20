@@ -72,6 +72,13 @@ const h5activeRouter = {
         title: '公众号关键字'
       }
     },
+    {
+      path: 'boc',
+      component: () => import('@/view/h5-acitive/boc'),
+      meta: {
+        title: '中国银行儿童节'
+      }
+    },
   ]
 }
 export default h5activeRouter

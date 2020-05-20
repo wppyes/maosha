@@ -63,7 +63,7 @@
           <img v-if="temp.Images" :src="temp.Images" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
-        <div class="chicun">尺寸：460*460</div>
+        <div class="chicun">尺寸：640*460</div>
       </el-form-item>
         <el-form-item label="描述" prop="Desc" style="width:800px">
           <el-input type="textarea" v-model="temp.Desc" placeholder="请填写描述" />
