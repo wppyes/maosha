@@ -46,9 +46,11 @@
       <el-table-column label="孩子姓名" align="center" prop="ChildrenName"></el-table-column>
       <el-table-column label="支行" align="center" prop="Branch"></el-table-column>
       <el-table-column label="年龄" align="center" prop="Age"></el-table-column>
+      <el-table-column label="票数" align="center" prop="Num"></el-table-column>
       <el-table-column label="视频" align="center" prop="Url">
         <template slot-scope="scope">
-          <video :src="scope.row.Url" controls style="width:100px; height:100px"></video>
+          <el-button size="mini" type="primary"  v-if="indexshipin!=scope.row.Id" @click="indexshipin=scope.row.Id">查看视频</el-button>
+          <video :src="scope.row.Url" v-else controls style="width:100px; height:100px"></video>
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center" prop="Status" width="80px">
@@ -59,7 +61,8 @@
       <el-table-column label="操作" align="center" width="200px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" v-if="scope.row.Status==0" @click="jion(scope.row,1)">晋级</el-button>
-          <el-button size="mini" type="danger" v-else @click="jion(scope.row,0)">取消晋级</el-button>
+          <el-button size="mini" type="primary" v-if="scope.row.Status==1" @click="jiapiao(scope.row)">操作</el-button>
+          <el-button size="mini" type="danger" v-if="scope.row.Status==1" @click="jion(scope.row,0)">取消晋级</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -72,6 +75,24 @@
       :limit.sync="listQuery.pageSize"
       @pagination="getList"
     />
+    <el-dialog :title="titles" :visible.sync="dialogFormVisible" :close-on-click-modal="false" width="600px">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="100px"
+        style="width: 500px; margin-left:50px;"
+      >       
+        <el-form-item label="票数" prop="Num">
+          <el-input placeholder="请输入票数"  v-model="temp.Num" style="width: 215px;"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="yep">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -89,6 +110,7 @@ export default {
       downloadLoading:false,
       arr:[{id:1,text:'幼儿组'},{id:2,text:'少儿组'}],
       arr1:[{id:0,text:'未晋级'},{id:1,text:'晋级'}],
+      dialogFormVisible:false,
       listQuery: {
         //搜素分页处理
         type: "",
@@ -97,13 +119,53 @@ export default {
         name: "",
         status: "",   
       },
-
+      titles:'',
+      temp:{
+        Num:'',
+        Id:''
+      },      
+      rules: {
+        Num: [{ required: true, message: "输入票数！", trigger: "blur" }],
+      },
+      indexshipin:-1
     };
   },
   created() {
     this.getList();
   },
   methods: {
+    yep(){
+      this.$refs["dataForm"].validate(valid => {
+        if (valid) {
+          var data = this.$qs.stringify(this.temp);
+          request({
+            url: "Boc/BRecord/Update_Num",
+            method: "post",
+            data
+          }).then(response => {
+            if (response.Status == 1) {  
+              this.$message({
+                message: response.Msg,
+                type: "success"
+              });
+              for(let i in this.list){
+                if(this.list[i].Id==this.temp.Id){
+                  this.list[i].Num+=this.temp.Num*1;
+                  break;
+                }
+              }
+              this.dialogFormVisible=false;
+            }
+          });
+        }
+      });
+    },
+    jiapiao(item){
+      this.titles='增加'+item.ChildrenName+'票数';
+      this.temp.Id=item.Id;
+      this.temp.Num='';  
+      this.dialogFormVisible=true;
+    },
     jion(row,status){
       var str=status==1?'晋级':'取消晋级';
       this.$confirm("确定要"+str+"吗？", '提示', {

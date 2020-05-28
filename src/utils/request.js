@@ -6,7 +6,7 @@ axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const service = axios.create({
   //  baseURL:'http://192.168.1.60/',
-  //  baseURL: 'http://192.168.1.145:8088/',
+  //  baseURL: 'http://192.168.1.146:8088/',
    baseURL: '/API/', // api 的 base_url
   timeout: 5000, // request timeout
 })
