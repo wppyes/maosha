@@ -36,6 +36,7 @@
           {{scope.row.Sex==0?'男':'女'}}
         </template>
       </el-table-column>
+      <el-table-column label="歌名" align="center" prop="Title"></el-table-column>
       <el-table-column label="票数" align="center" prop="Num"></el-table-column>
       <el-table-column label="视频" align="center" prop="Url">
         <template slot-scope="scope">
@@ -45,13 +46,13 @@
       </el-table-column>
       <el-table-column label="状态" align="center" prop="Status" width="80px">
         <template slot-scope="scope">
-          <span :class="'status'+scope.row.Status">{{scope.row.Status==0?'未晋级':'晋级'}}</span>
+          <span :class="'status'+scope.row.Status">{{scope.row.Status==0?'语音转换失败':scope.row.Status==1?'未晋级':'晋级'}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" v-if="scope.row.Status==1" @click="jion(scope.row,2)">晋级</el-button>
-          <el-button size="mini" type="primary" v-if="scope.row.Status==1" @click="jiapiao(scope.row)">操作</el-button>
+          <el-button size="mini" type="primary" v-if="scope.row.Status==2" @click="jiapiao(scope.row)">操作</el-button>
           <el-button size="mini" type="danger" v-if="scope.row.Status==2" @click="jion(scope.row,1)">取消晋级</el-button>
         </template>
       </el-table-column>

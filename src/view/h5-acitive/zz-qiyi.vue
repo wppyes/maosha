@@ -36,8 +36,9 @@
           {{scope.row.Sex==0?'男':'女'}}
         </template>
       </el-table-column>
+      <el-table-column label="歌名" align="center" prop="Title"></el-table-column>
       <el-table-column label="票数" align="center" prop="Num"></el-table-column>
-      <el-table-column label="视频" align="center" prop="Url">
+      <el-table-column label="音频" align="center" prop="Url">
         <template slot-scope="scope">
           <el-button size="mini" type="primary"  v-if="indexshipin!=scope.row.Id" @click="indexshipin=scope.row.Id">播放录音</el-button>
           <audio :src="scope.row.Url" autoplay v-else controls></audio>
@@ -45,7 +46,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" prop="Status" width="80px">
         <template slot-scope="scope">
-          <span :class="'status'+scope.row.Status">{{scope.row.Status==0?'未晋级':'晋级'}}</span>
+          <span :class="'status'+scope.row.Status">{{scope.row.Status==0?'语音转换失败':scope.row.Status==1?'未晋级':'晋级'}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200px">
