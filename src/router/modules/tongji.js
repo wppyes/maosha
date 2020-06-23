@@ -79,6 +79,20 @@ const h5activeRouter = {
         title: '中国银行儿童节'
       }
     },
+    {
+      path: 'zz-qiyi',
+      component: () => import('@/view/h5-acitive/zz-qiyi'),
+      meta: {
+        title: '郑银七一活动'
+      }
+    },
+    {
+      path: 'zz-qiyi-fuzhu',
+      component: () => import('@/view/h5-acitive/zz-qiyi-fuzhu'),
+      meta: {
+        title: '郑银七一辅助'
+      }
+    },
   ]
 }
 export default h5activeRouter
