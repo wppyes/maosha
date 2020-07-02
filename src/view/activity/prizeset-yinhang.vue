@@ -220,7 +220,7 @@ export default {
     getList(){
       this.listLoading = true;
       request({
-        url: "Prize/GetPrizeList",
+        url: "TPrize/GetPrizeList",
         method: "get",
         params: this.listQuery
       }).then(response => {
@@ -303,7 +303,7 @@ export default {
           };  
           var data = this.$qs.stringify(param);
           request({
-            url: "Prize/YHPrizeBatch",
+            url: "TPrize/YHPrizeBatch",
             method: "post",
             data
           }).then(response => {
@@ -360,7 +360,7 @@ export default {
           cancelButtonText: '取消',
         }).then(() => {
           request({
-            url: "Prize/Excel",
+            url: "TPrize/Excel",
             method: "get",
             params: {time1:this.time1,time2:this.time2}
           }).then(response => {
@@ -408,7 +408,7 @@ export default {
           console.log(param)
           var data = this.$qs.stringify(param);
           request({
-            url: "Prize/SetPrize",
+            url: "TPrize/SetPrize",
             method: "post",
             data
           }).then(response => {

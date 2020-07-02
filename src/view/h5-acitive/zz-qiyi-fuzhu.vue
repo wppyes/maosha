@@ -28,6 +28,7 @@
       <el-button class="filter-item" type="primary" @click="xianzhi">确定</el-button>
     </div>
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row>
+      <el-table-column label="编号" align="center" prop="Id"></el-table-column>
       <el-table-column label="姓名" align="left" prop="Name"></el-table-column>
       <el-table-column label="年龄" align="center" prop="Age"></el-table-column>
       <el-table-column label="手机号码" align="center" prop="Phone"></el-table-column>
@@ -100,7 +101,7 @@ export default {
       listLoading: false, //列表加载
       downloadLoading:false,
       arr:[{id:1,text:'幼儿组'},{id:2,text:'少儿组'}],
-      arr1:[{id:0,text:'未晋级'},{id:1,text:'晋级'}],
+      arr1:[{id:1,text:'未晋级'},{id:2,text:'晋级'}],
       dialogFormVisible:false,
       listQuery: {
         //搜素分页处理

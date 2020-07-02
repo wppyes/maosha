@@ -72,6 +72,13 @@ const activityRouter = {
         title: '银行奖品发放'
       }
     },
+    {
+      path: 'chaxu-yinhang',
+      component: () => import('@/view/activity/chaxu-yinhang'),
+      meta: {
+        title: '银行物流(查询)'
+      }
+    },
   ]
 }
 export default activityRouter

@@ -93,6 +93,13 @@ const h5activeRouter = {
         title: '郑银七一辅助'
       }
     },
+    {
+      path: 'xianzhi',
+      component: () => import('@/view/h5-acitive/xianzhi'),
+      meta: {
+        title: '限制'
+      }
+    },
   ]
 }
 export default h5activeRouter
