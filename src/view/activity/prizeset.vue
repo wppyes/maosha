@@ -90,7 +90,7 @@
         :model="temp1"
         label-position="left"
         label-width="100px"
-        style="width: 350px; margin-left:50px;"
+        style="width: 550px; margin-left:20px;"
       >        
          <el-form-item label="物流" prop="lid">
           <el-select v-model="temp1.lid" placeholder="请选择物流">
@@ -98,8 +98,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="活动选择" prop="ids">
-          <el-checkbox-group v-model="temp1.ids">
-            <el-checkbox v-for="item in parizeselect" :label="item.Id" :key="item.Id" name="type">{{item.Title}}</el-checkbox>
+          <el-checkbox-group v-model="temp1.ids" style="overflow-y:auto; height:200px;">
+            <el-checkbox v-for="item in parizeselect" :label="item.Id" :key="item.Id" name="type">{{item.Id}}-{{item.Title}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="文件上传" prop="filepath">          
