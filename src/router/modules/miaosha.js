@@ -17,6 +17,13 @@ const miaoshaRouter = {
       }
     },
     {
+      path: 'list/baimingdan',
+      component: () => import('@/view/miaosha/baimingdan'),
+      meta: {
+        title: '设置白名单'
+      }
+    },
+    {
       path: 'list/list-add-renwu',
       component: () => import('@/view/miaosha/list-add-renwu'),
       meta: {

@@ -1,6 +1,22 @@
 <template>
   <div class="prizeset boxright">
-    <div class="filter-container">  
+    <div class="filter-container"> 
+      
+      <el-input
+        placeholder="产品名字"
+        v-model="listQuery.productname"
+        style="width: 150px;"
+        class="filter-item"
+        clearable
+      />
+        <el-input
+          placeholder="姓名/手机号码"
+          v-model="listQuery.name"
+          style="width: 200px;"
+          class="filter-item"
+          clearable
+        />
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
         <el-button
           :loading="downloadLoading"
           class="filter-item"
@@ -131,6 +147,8 @@ export default {
         //搜素分页处理
         pageIndex: 1,
         pageSize: 13,
+        name:'',
+        productname:''
       },
       temp1:{
         lid:0,
@@ -166,7 +184,11 @@ export default {
     this.getList();
     this.getmodel();
   },
-  methods: {
+  methods: {    
+    handleFilter() {
+      this.listQuery.pageIndex = 1;
+      this.getList();
+    },
     handleDownload(){
       this.downloadLoading = true;
       this.$confirm("确定要下载模板吗？", '提示', {

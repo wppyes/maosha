@@ -50,6 +50,7 @@
         <el-table-column label="销量/件" align="center" prop="Counts" width="110px"></el-table-column>
         <el-table-column label="总金额" align="center" prop="Sum" width="80px"></el-table-column>
         <el-table-column label="UV" align="center" prop="ProductUV" width="80px"></el-table-column>
+        <el-table-column label="购买失败" align="center" prop="ProductCount" width="80px"></el-table-column>
 
       </el-table>
     </el-dialog>

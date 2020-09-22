@@ -27,7 +27,7 @@
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row>
       <el-table-column label="名称" align="center" prop="Name"></el-table-column>
       </el-table-column>
-      <el-table-column label="活动时间" align="center" prop="StartTimeStr" width="250px">
+      <el-table-column label="活动时间" align="center" prop="StartTimeStr" width="290px">
         <template slot-scope="scope">
           {{scope.row.StartTimeStr}} - {{scope.row.DeadlineStr}}
         </template>
@@ -52,7 +52,7 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
-        <template slot-scope="scope">
+        <template slot-scope="scope">    
           <el-button size="mini" type="primary" @click="linktoadd(scope.row)" v-if="scope.row.Status==0">
             <i class="el-icon-edit"></i>
           </el-button>
@@ -68,6 +68,9 @@
           <el-button size="mini" type="danger" @click="handlzhuagntai(scope.row,2)" v-if="scope.row.Status==1">
             结束活动
           </el-button>         
+          <el-button size="mini" type="primary" @click="linkto(scope.row)" v-if="scope.row.IsRoster==1">
+            白名单
+          </el-button>       
         </template>
       </el-table-column>
     </el-table> 
@@ -88,6 +91,15 @@
               end-placeholder="结束日期"
               value-format="yyyy-MM-dd HH:mm:ss"
             ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="白名单" prop="IsRoster">
+          <el-switch
+            v-model="temp.IsRoster"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-text="是"
+            inactive-text="否">
+          </el-switch>
         </el-form-item>
         <el-form-item label="任务开启" prop="IsMission">
           <el-switch
@@ -143,7 +155,8 @@ export default {
         Deadline:'',//结束时间
         Name:'',//名称
         IsMission:false,
-        ARId:''
+        ARId:'',
+        IsRoster:false
       },
       value:'',
       total:0,
@@ -165,6 +178,9 @@ export default {
         ],
         IsMission: [
           { required: true, message: "是否有任务必须选择！", trigger: "blur" }
+        ],
+        IsRoster: [
+          { required: true, message: "白名单必须选择！", trigger: "blur" }
         ],
       },   
       marklist:[]
@@ -241,6 +257,12 @@ export default {
         query: { id:row.Id }
       });
     },
+    linkto(row){
+      this.$router.push({
+        path: "/miaosha/list/baimingdan",
+        query: { id:row.Id }
+      });
+    },
     getDDll(){      
       request({
         url: "Activity/DDL",
@@ -275,6 +297,7 @@ export default {
         this.temp.StartTime='';
         this.temp.Deadline='';
         this.temp.IsMission=false;
+        this.temp.IsRoster=false;
         this.temp.ARId='';
         this.iscreat=true;
       }else{
@@ -286,6 +309,7 @@ export default {
         this.temp.Deadline=row.DeadlineStr;
         this.temp.ARId=row.ARId;
         this.temp.IsMission=row.IsMission==0?false:true;
+        this.temp.IsRoster=row.IsRoster==0?false:true;
         this.iscreat=false;
       };
       this.$nextTick(() => {
@@ -324,6 +348,7 @@ export default {
     },
     createData(){      
       let Mission=this.temp.IsMission?1:0;
+      let IsRoster=this.temp.IsRoster?1:0;
       if(!this.temp.IsMission){
         this.temp.ARId=0;
       }
@@ -333,6 +358,7 @@ export default {
         StartTime:this.temp.StartTime,
         Deadline:this.temp.Deadline,
         IsMission:Mission,
+        IsRoster:IsRoster,
         ARId:this.temp.ARId
       }
       this.$refs["dataForm"].validate(valid => {
@@ -351,6 +377,7 @@ export default {
                   StartTimeStr:this.temp.StartTime,
                   DeadlineStr:this.temp.Deadline,
                   IsMission:Mission,
+                  IsRoster:IsRoster,
                   ARId:this.temp.ARId,
                   PV:0,
                   UV:0,
@@ -365,6 +392,7 @@ export default {
                     this.list[i].DeadlineStr=this.temp.Deadline;
                     this.list[i].ARId=this.temp.ARId;
                     this.list[i].IsMission=Mission;
+                    this.list[i].IsRoster=IsRoster;
                     break;
                   }  
                 }          

@@ -69,29 +69,29 @@
       >下载订单</el-button>
     </div>
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row>
-      <el-table-column label="编号" align="left" prop="PayOrderNum">
+      <el-table-column label="编号" align="left" prop="PayOrderNum" width="250px">
         <template slot-scope="scope">
          UserId：{{scope.row.UserId}}<br/>内部：{{scope.row.OrderNum}}<br/>银行：{{scope.row.PayOrderNum}}
         </template>
       </el-table-column>
-      <el-table-column label="活动/产品" align="left" prop="Title">
+      <el-table-column label="活动/产品" align="left" prop="Title" width="200px">
         <template slot-scope="scope">
           <span class="status2">活动：{{scope.row.ActivityName}}</span>
          <br/>产品：{{scope.row.Title}}
         </template>
       </el-table-column>
       <el-table-column label="支付金额" align="center" prop="PayAmount" width="80px"></el-table-column>
-      <el-table-column label="收货信息" align="center" width="120px">
+      <el-table-column label="收货信息" align="center" width="150px">
         <template slot-scope="scope">{{scope.row.Name}}<br/>{{scope.row.Phone}}</template>
       </el-table-column>
       <el-table-column label="运单编号" align="center" prop="LogisticCode" width="150px"></el-table-column>
-      <el-table-column label="时间" align="center" prop="CreatedStr" width="190px"></el-table-column>
+      <el-table-column label="时间" align="center" prop="CreatedStr" width="180px"></el-table-column>
       <el-table-column label="状态" align="center" prop="Status" width="80px">
         <template slot-scope="scope">
           <span :class="'status'+scope.row.Status" v-text="setliexing(scope.row.Status)"></span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200px">
+      <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -100,6 +100,8 @@
             v-if="scope.row.Status==3"
           >物流</el-button>
           <el-button size="mini" type="primary" @click="detail(scope.row)">详情</el-button>
+          <el-button size="mini" type="primary" v-if="scope.row.Status==0 || scope.row.Status==4 " @click="changestatus(scope.row,1)">成功</el-button>
+          <el-button size="mini" type="danger" v-if="scope.row.Status==0 || scope.row.Status==4 " @click="changestatus(scope.row,0)">失败</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -201,6 +203,31 @@ export default {
     }
   },
   methods: {
+    changestatus(row,type){
+      var data = this.$qs.stringify({id:row.Id,type:type});
+      var str= type==1?'成功':'失败'
+      this.$confirm("确定要处理"+str+"吗？", "提示", {
+        dangerouslyUseHTMLString: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      })
+        .then(() => {
+          request({
+            url: "Orders/UpdateOrder",
+            method: "post",
+            data
+          }).then(response => {
+            if (response.Status==1) {
+              row.Status=type;
+              this.$message({
+                message: response.Msg,
+                type: "success"
+              });
+            }
+          });
+        })
+        .catch(() => {});
+    },
     querySearch(queryString, cb) {
       request({
           url: "Activity/GetActivityList",
@@ -230,7 +257,6 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(() => {
-          console.log(1);
           request({
             url: "Orders/GetOrderExcel",
             method: "get",

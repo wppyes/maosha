@@ -346,7 +346,8 @@ export default {
             data
           }).then(response => {
             if (response.Status==1) {
-              this.getList();    
+              this.getList();   
+              this.$refs.upload.clearFiles() 
               this.dialogwuliuVisible = false;
               this.$message({
                 message: response.Msg,
