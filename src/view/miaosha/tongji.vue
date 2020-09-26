@@ -36,7 +36,7 @@
         <el-table-column label="指标/次" align="center" prop="Count"></el-table-column>
       </el-table>
     </el-dialog>
-    <el-dialog title="产品" :visible.sync="chanpinshow" :close-on-click-modal="false" width="800px">
+    <el-dialog title="产品" :visible.sync="chanpinshow" :close-on-click-modal="false" width="1000px">
       <el-table :data="rows.ProductList" border fit highlight-current-row>
         <el-table-column label="名称" align="left" prop="Title"></el-table-column>
         <el-table-column label="原价/元" align="center" prop="Price" width="80px"></el-table-column>
@@ -50,7 +50,7 @@
         <el-table-column label="销量/件" align="center" prop="Counts" width="110px"></el-table-column>
         <el-table-column label="总金额" align="center" prop="Sum" width="80px"></el-table-column>
         <el-table-column label="UV" align="center" prop="ProductUV" width="80px"></el-table-column>
-        <el-table-column label="购买失败" align="center" prop="ProductCount" width="80px"></el-table-column>
+        <el-table-column label="购买失败" align="center" prop="ProductCount" width="100px"></el-table-column>
 
       </el-table>
     </el-dialog>
