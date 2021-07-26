@@ -1,6 +1,16 @@
 <template>
   <div class="prizeset boxright">
     <div class="filter-container">
+      <el-select
+        v-model="listQuery.type"
+        placeholder="选择类型"
+        clearable
+        style="width: 150px"
+        class="filter-item"
+      >
+        <el-option label="虚拟" value="1"></el-option>
+        <el-option label="实物" value="0"></el-option>
+      </el-select> 
       <el-input
         placeholder="请输入标题/手机号码/姓名"
         v-model="listQuery.title"
@@ -18,13 +28,18 @@
           clearable
           start-placeholder="开始日期"
           end-placeholder="结束日期" />
-      </el-date-picker>
+      </el-date-picker>      
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>   
       <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">下载</el-button>   
       <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleup">批量设置物流</el-button>   
       <span>格式：（id,物流名称，物流单号）</span>
     </div>
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row>
+      <el-table-column label="奖品类型" align="center">
+         <template slot-scope="scope">
+          <span>{{scope.row.Type==1?'虚拟':'实物'}}</span>          
+        </template>
+      </el-table-column>
       <el-table-column label="活动名称" align="center" prop="Prize"></el-table-column>
       <el-table-column label="收货人" align="center" prop="Name"></el-table-column>
       <el-table-column label="电话" align="center" prop="Phone"></el-table-column>
@@ -37,9 +52,13 @@
       </el-table-column>
       <el-table-column label="物流单号" align="center" prop="LogisticsCode">
       </el-table-column>
-      <el-table-column label="时间" align="center" prop="CreateTimeStr">
+      <el-table-column label="卡密" align="center" prop="ExCode">
       </el-table-column>
-      <el-table-column label="发货时间" align="center" prop="UpdateTimeStr">
+      <el-table-column label="时间" align="center" prop="CreateTimeStr" width="180px">
+        <template slot-scope="scope">
+          <div>订单：{{scope.row.CreateTimeStr}}</div>    
+          <div>发货：{{scope.row.UpdateTimeStr}}</div>           
+        </template>
       </el-table-column>
       <!-- <el-table-column label="详情" align="center" prop="LogisticCode">
          <template slot-scope="scope">
@@ -76,13 +95,19 @@
         label-width="100px"
         style="width: 350px; margin-left:50px;"
       >        
-         <el-form-item label="物流" prop="Name">
+         <el-form-item label="物流" prop="Name" v-if="type==0">
           <el-select v-model="wuliu" placeholder="请选择物流">
             <el-option v-for="item in Model" :label="item.Name" :key="item.Name" :value="item.Name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="物流编号" prop="LogisticCode">
+        <el-form-item label="物流编号" prop="LogisticCode" v-if="type==0">
           <el-input placeholder="请输入物流编号"  v-model="temp.LogisticCode"/>
+        </el-form-item>
+        <el-form-item label="卡号" prop="cardno" v-if="type==1">
+          <el-input placeholder="请输入卡号"  v-model="temp.cardno"/>
+        </el-form-item>
+        <el-form-item label="密码" prop="key" v-if="type==1">
+          <el-input placeholder="请输入密码"  v-model="temp.key"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -109,6 +134,21 @@
         label-width="100px"
         style="width: 350px; margin-left:50px;"
       >        
+      
+        <el-form-item label="类型" prop="type">
+           <el-select
+            v-model="temp1.type"
+            placeholder="选择类型"
+            clearable
+            style="width: 150px"
+            class="filter-item"
+          >
+            <el-option label="虚拟(卡)" value="1"></el-option>
+            <el-option label="虚拟(卡密)" value="2"></el-option>
+            <el-option label="实物" value="0"></el-option>
+          </el-select> 
+        </el-form-item>
+       
         <el-form-item label="文件上传" prop="filepath">          
           <el-upload
               class="upload-demo"
@@ -158,25 +198,33 @@ export default {
         LogisticCode:'',
         ShipperCode:'',
         Name:'',
-        EId:0
+        EId:0,
+        cardno:'',
+        key:''
       }, 
+      type:'',
       remark:{},
       parizeselect:[],
       listQuery: {
         //搜素分页处理
         title: '',
         page: 1,
-        sum: 15
+        sum: 15,
+        type:''
       },
       time1:'',
       time2:'',
       temp1:{
-        filepath:''
+        filepath:'',
+        type:''
       },
       dialogwuliuVisible:false,
       rules:{  
         Name: [
           { required: true, message: "请选择物流！", trigger: "blur" }
+        ],
+        cardno: [
+          { required: true, message: "请输入卡号！", trigger: "blur" }
         ]
       },
       ruleswuliu:{  
@@ -185,6 +233,9 @@ export default {
         ],
         filepath: [
           { required: true, message: "请上传文件！", trigger: "blur" }
+        ],
+        type:[
+          { required: true, message: "请选择类型！", trigger: "blur" }
         ]
       }
     };
@@ -238,6 +289,7 @@ export default {
     handleup(){
       this.dialogwuliuVisible=true;
       this.temp1.filepath='';
+      this.temp1.type='';
       this.$nextTick(() => {
         this.$refs["datawuliu"].clearValidate();
       });
@@ -260,7 +312,7 @@ export default {
     },
     handlefafang(row,title,creat){
       this.wuliu=this.Model[0].Name;
-      
+      this.type=row.Type;
       this.temp.Id=row.Id;
       // this.temp.EId='';
       // this.temp.Id=0;
@@ -269,6 +321,8 @@ export default {
       this.temp.Name=this.wuliu;
       this.temp.ShipperCode='';
       this.temp.LogisticCode='';
+      this.temp.cardno='';
+      this.temp.key='';
       for(let i in this.Model){
         if(this.Model[i].Name==this.wuliu){
           this.temp.ShipperCode=this.Model[i].ShipperCode;
@@ -300,6 +354,7 @@ export default {
         if (valid) { 
           var param={
               filepath:this.temp1.filepath,
+              type:this.temp1.type
           };  
           var data = this.$qs.stringify(param);
           request({
@@ -326,6 +381,9 @@ export default {
       this.temp.LogisticCode=row.LogisticCode;
       this.temp.Name=row.LogName;
       this.wuliu=row.LogName;
+      
+      this.temp.cardno=row.cardno;
+      this.temp.key=row.key;
       for(let i in this.Model){
         if(this.Model[i].Name==row.LogName){
           this.temp.ShipperCode=this.Model[i].ShipperCode;
@@ -403,6 +461,8 @@ export default {
               logisticsname:this.temp.Name,
               // ShipperCode:this.temp.ShipperCode,
               logisticscode:this.temp.LogisticCode,
+              cardno:this.temp.cardno,
+              key:this.temp.key
               // EId:this.temp.EId
           };    
           console.log(param)

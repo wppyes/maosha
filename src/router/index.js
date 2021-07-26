@@ -10,6 +10,7 @@ import miaoshaRouter from './modules/miaosha';
 import h5Router from './modules/h5'
 import DB from '@/view/DB0';
 import h5activeRouter from './modules/tongji'
+import virtualgiftRouter from './modules/virtualgift'
 export const constantRouterMap = [
   {
     path: '/',
@@ -90,7 +91,8 @@ export const constantRouterMap = [
   activityRouter,
   h5Router,
   miaoshaRouter,
-  h5activeRouter
+  h5activeRouter,
+  virtualgiftRouter
 ]
 const router = new Router({
   // mode: 'history', // require service support

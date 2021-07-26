@@ -154,8 +154,9 @@
           <el-input type="textarea" v-model="temp.ActorRule" placeholder="请填写活动规则"/>
         </el-form-item>
         <div>
-        <el-form-item label="描述" prop="Describe" style="width:800px">
-          <textarea id="myEditor" style="width:100%;"></textarea>  
+        <el-form-item label="描述" prop="Describe" style="width:1100px">
+          <!-- <textarea id="myEditor" style="width:100%;"></textarea>  -->
+          <Tinymce ref="editor" v-model="temp.Describe" :key="tinymceFlag" :height="500" /> 
         </el-form-item></div>
     </el-form>
     <el-button type="primary" style="margin-left:170px" @click="createData">确定</el-button>
@@ -165,6 +166,7 @@
 import request from "@/utils/request";
 import upfile from "@/utils/upload";
 import Pagination from "@/components/Pagination";
+import Tinymce from '@/components/Tinymce';
 import { fail } from 'assert';
 var validnum=(rule, value,callback)=>{
     if(!value){
@@ -179,7 +181,7 @@ var validnum=(rule, value,callback)=>{
   }
 export default {
   name: "merchants",
-  components: { Pagination},
+  components: { Pagination,Tinymce},
   data() {
     return {
       Model:[],
@@ -189,6 +191,7 @@ export default {
       prizelist:[],
       total:0,
       listLoading:false,
+      tinymceFlag:1,
       temp:{
         Id:0,
         Type:'',//类型
@@ -256,16 +259,25 @@ export default {
   created() {
     this.temp.Id=this.$route.query.id;
     this.getModel();
+    if(this.temp.Id==0){                
+      this.temp.Type='';
+      this.temp.Title='';
+      this.temp.Describe='';
+      this.temp.ActorRule='';
+      this.temp.Cover='';
+      this.temp.Image='';
+      this.temp.PrizeId='';
+      this.temp.PrizeNum='';
+      this.temp.AwardType='';
+      this.temp.AwardTime='';
+      this.temp.AwardNumber='';
+      this.temp.ShareTitle='';
+      this.temp.ShareDesc=''; 
+      this.temp.IsBinding=false;  
+      this.temp.PType='';
+    }
   },
   mounted(){
-    UE.delEditor('myEditor');
-    this.editor = UE.getEditor('myEditor',{toolbars:[[
-            'fullscreen', 'source', '|', 'undo', 'redo', '|',
-            'bold', 'italic', 'underline', 'fontborder','fontfamily', 'fontsize','strikethrough','|', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', ,
-            'simpleupload', 'insertimage','|', 'justifyleft','justifyright', 'justifycenter', 'justifyjustify','cleardoc'
-        ]],
-        initialFrameHeight:400
-    });
     if(this.$route.query.id>0){      
       this.getdata();
     }else{
@@ -273,9 +285,6 @@ export default {
         this.$refs["dataForm"].clearValidate();
       });
     } 
-  },
-  destroyed() {//销毁后，第一次和切换路由后都能加载出来
-    this.editor.destroy();
   },
   methods: {
     getdata(){
@@ -304,9 +313,10 @@ export default {
             this.temp.PType=response.ActivityModel.PType.toString();
           }          
           this.getprize();
-          this.editor.ready( ()=>{
-              this.editor.setContent(response.ActivityModel.Describe)
-          });
+          this.$refs.editor.setContent(response.ActivityModel.Describe);  
+          this.$nextTick(() => {
+            this.$refs['dataForm'].clearValidate()
+          })
         }            
       });
     },
@@ -342,22 +352,10 @@ export default {
         }
       );
     },
-    backto(){
-      this.temp.Type='';
-      this.temp.Title='';
-      this.temp.Describe='';
-      this.temp.ActorRule='';
-      this.temp.Cover='';
-      this.temp.Image='';
-      this.temp.PrizeId='';
-      this.temp.PrizeNum='';
-      this.temp.AwardType='';
-      this.temp.AwardTime='';
-      this.temp.AwardNumber='';
-      this.temp.ShareTitle='';
-      this.temp.ShareDesc=''; 
-      this.temp.IsBinding=false;  
-      this.temp.PType='';
+    backto(){           
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
       this.$router.go(-1);
     },
     createData(){
@@ -366,7 +364,6 @@ export default {
       }else{
         this.temp.AwardTime=10;
       }
-      this.temp.Describe=this.editor.getContent();
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           if(this.temp.AwardType==0){
@@ -387,21 +384,25 @@ export default {
                 message: response.Msg,
                 type: "success"
               });    
-              this.temp.Type='';
-              this.temp.Title='';
-              this.temp.Describe='';
-              this.temp.ActorRule='';
-              this.temp.Cover='';
-              this.temp.Image='';
-              this.temp.PrizeId='';
-              this.temp.PrizeNum='';
-              this.temp.AwardType='';
-              this.temp.AwardTime='';
-              this.temp.AwardNumber='';
-              this.temp.ShareTitle='';
-              this.temp.ShareDesc=''; 
-              this.temp.IsBinding=false;   
-              this.temp.PType='';
+              if(this.temp.Id==0){                
+                this.temp.Type='';
+                this.temp.Title='';
+                this.temp.Describe='';
+                this.temp.ActorRule='';
+                this.temp.Cover='';
+                this.temp.Image='';
+                this.temp.PrizeId='';
+                this.temp.PrizeNum='';
+                this.temp.AwardType='';
+                this.temp.AwardTime='';
+                this.temp.AwardNumber='';
+                this.temp.ShareTitle='';
+                this.temp.ShareDesc=''; 
+                this.temp.IsBinding=false;  
+                this.temp.PType='';
+                this.$refs.editor.setContent('');
+              }
+              this.backto();
             }            
           });
         }

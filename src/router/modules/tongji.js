@@ -45,6 +45,13 @@ const h5activeRouter = {
       }
     },
     {
+      path: 'qingchun-hongbao',
+      component: () => import('@/view/h5-acitive/qingchun-hongbao'),
+      meta: {
+        title: '青春红包配置'
+      }
+    },
+    {
       path: 'fuka-prize',
       component: () => import('@/view/h5-acitive/fuka-prize'),
       meta: {
@@ -98,6 +105,48 @@ const h5activeRouter = {
       component: () => import('@/view/h5-acitive/xianzhi'),
       meta: {
         title: '限制'
+      }
+    },
+    {
+      path: 'tree-tongji',
+      component: () => import('@/view/h5-acitive/tree-tongji'),
+      meta: {
+        title: '摇钱树统计'
+      }
+    },
+    {
+      path: 'tree-baimingdan',
+      component: () => import('@/view/h5-acitive/tree-baimingdan'),
+      meta: {
+        title: '摇钱树白名单'
+      }
+    },
+    {
+      path: 'tree-ads',
+      component: () => import('@/view/h5-acitive/tree-ads'),
+      meta: {
+        title: '摇钱树广告'
+      }
+    },
+    {
+      path: 'yuandan-userlist',
+      component: () => import('@/view/h5-acitive/yuandan-userlist'),
+      meta: {
+        title: '用户列表(元旦)'
+      }
+    },
+    {
+      path: 'yuandan-prizelist',
+      component: () => import('@/view/h5-acitive/yuandan-prizelist'),
+      meta: {
+        title: '中奖列表(元旦)'
+      }
+    },
+    {
+      path: 'yuandan-set',
+      component: () => import('@/view/h5-acitive/yuandan-set'),
+      meta: {
+        title: '配置(元旦)'
       }
     },
   ]

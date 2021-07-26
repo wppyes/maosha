@@ -86,7 +86,7 @@ export default {
     getList() {
       this.listLoading = true;
       request({
-        url: "Statistics/GetStatisticsList",
+        url: "TStatistics/GetStatisticsList",
         method: "get",
         params: this.listQuery
       }).then(response => {

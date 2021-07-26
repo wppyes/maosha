@@ -17,6 +17,13 @@ const activityRouter = {
       }
     },
     {
+      path: '61baimingdan',
+      component: () => import('@/view/h5/61baimingdan'),
+      meta: {
+        title: '白名单'
+      }
+    },
+    {
       path: 'range',
       component: () => import('@/view/h5/range'),
       meta: {
@@ -84,6 +91,34 @@ const activityRouter = {
       component: () => import('@/view/h5/shouquan'),
       meta: {
         title: '公共授权'
+      }
+    },
+    {
+      path: 'zhongmouwuyi',
+      component: () => import('@/view/h5/zhongmouwuyi'),
+      meta: {
+        title: '中牟五一'
+      }
+    },
+    {
+      path: 'zhongmou58',
+      component: () => import('@/view/h5/zhongmou58'),
+      meta: {
+        title: '中牟母亲节'
+      }
+    },
+    {
+      path: 'zhongmou58-fuzhu',
+      component: () => import('@/view/h5/zhongmou58-fuzhu'),
+      meta: {
+        title: '中牟母亲节(辅助)'
+      }
+    },
+    {
+      path: 'zhongmouwuyi-fuzhu',
+      component: () => import('@/view/h5/zhongmouwuyi-fuzhu'),
+      meta: {
+        title: '中牟五一(辅助)'
       }
     },
   ]

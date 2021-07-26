@@ -69,9 +69,10 @@
           <el-input type="textarea" v-model="temp.Desc" placeholder="请填写描述" />
         </el-form-item>
       <div>
-        <el-form-item label="详情" prop="Contents" style="width:800px">
+        <el-form-item label="详情" prop="Contents" style="width:1100px">
           <!-- <el-input v-model="temp.Contents" placeholder="请填写详情" /> -->
-          <textarea id="myEditor" style="width:100%;"></textarea>
+          <!-- <textarea id="myEditor" style="width:100%;"></textarea> -->
+          <Tinymce ref="editor" v-model="temp.Contents" :key="tinymceFlag" :height="500" /> 
         </el-form-item>
       </div>
     </el-form>
@@ -80,10 +81,12 @@
 </template>
 <script>
 import request from "@/utils/request";
-import upfile from "@/utils/upload";
+import upfile from "@/utils/upload1";
 
+import Tinymce from '@/components/Tinymce/index1';
 export default {
   name: "addproduct",
+  components: { Tinymce},
   data() {
     return {
       Model: [{
@@ -104,6 +107,7 @@ export default {
         Difference:'',
       },
       editor: null,
+      tinymceFlag:1,
       rules: {
         Type: [{ required: true, message: "选择类型！", trigger: "blur" }],
         Difference: [{ required: true, message: "选择类型！", trigger: "blur" }],
@@ -127,64 +131,25 @@ export default {
   },
   created() {
     this.temp.Id = this.$route.query.id;
-    this.getdll();
+    this.getdll();    
+    if(this.temp.Id==0){
+      this.temp.Title='';
+      this.temp.Cover = '';
+      this.temp.Images = '';
+      this.temp.Contents = '';
+      this.temp.Desc = '';
+      this.temp.Type = '';
+      this.temp.Difference='';
+    }  
   },
   mounted() {
-    UE.delEditor("myEditor");
-    this.editor = UE.getEditor("myEditor", {
-      toolbars: [
-        [
-          "fullscreen",
-          "source",
-          "|",
-          "undo",
-          "redo",
-          "|",
-          "bold",
-          "italic",
-          "underline",
-          "fontborder",
-          "fontfamily",
-          "fontsize",
-          "strikethrough",
-          "|",
-          "superscript",
-          "subscript",
-          "removeformat",
-          "formatmatch",
-          "autotypeset",
-          "blockquote",
-          "pasteplain",
-          "|",
-          "forecolor",
-          "backcolor",
-          ,
-          "simpleupload",
-          "insertimage",
-          "|",
-          "justifyleft",
-          "justifyright",
-          "justifycenter",
-          "justifyjustify",
-          "cleardoc"
-        ]
-      ],
-      initialFrameHeight: 400
-    });
-    
-  },
-  activated () {
-    if (this.$route.query.id > 0) {
+    if(this.$route.query.id>0){      
       this.getdata();
-    } else {
+    }else{
       this.$nextTick(() => {
         this.$refs["dataForm"].clearValidate();
       });
-    }
-　},
-  destroyed() {
-    //销毁后，第一次和切换路由后都能加载出来
-    this.editor.destroy();
+    } 
   },
   methods: {
     getdll(){
@@ -213,9 +178,10 @@ export default {
           this.temp.Desc = response.Model.Desc;
           this.temp.Type = response.Model.Type.toString();
           this.temp.Difference = response.Model.Difference.toString();
-          this.editor.ready(() => {
-            this.editor.setContent(response.Model.Contents);
-          });
+          this.$refs.editor.setContent(response.Model.Contents);  
+          this.$nextTick(() => {
+            this.$refs['dataForm'].clearValidate()
+          })
         }
       });
     },
@@ -244,17 +210,12 @@ export default {
       });
     },
     backto() {
-      this.temp.Title = '';
-      this.temp.Cover = '';
-      this.temp.Images = '';
-      this.temp.Contents = '';
-      this.temp.Desc = '';
-      this.temp.Type = '';
-      this.temp.Difference = '';
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
       this.$router.go(-1);
     },
     createData() {
-      this.temp.Contents = this.editor.getContent();
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           var data = this.$qs.stringify(this.temp);
@@ -269,6 +230,16 @@ export default {
                 message: response.Msg,
                 type: "success"
               });
+              if(this.temp.Id==0){
+                this.temp.Title='';
+                this.temp.Cover = '';
+                this.temp.Images = '';
+                this.temp.Contents = '';
+                this.temp.Desc = '';
+                this.temp.Type = '';
+                this.temp.Difference='';
+                this.$refs.editor.setContent('');
+              }  
               this.backto();
             }
           });

@@ -31,7 +31,7 @@ export default {
         rank:'',
         ret:''
       },
-      ranklist:[1,2,3,4,5,6,7],
+      ranklist:[1,2,3,4],
       rules: {
         rank: [
           { required: true, message: "排名必须选择！", trigger: "blur" }
@@ -50,7 +50,7 @@ export default {
         if (valid) {
           var data = this.$qs.stringify(this.temp);
           request({
-            url: "Children/SetWinRank",
+            url: "Children/Game/SetWinRank",
             method: "post",
             data
           }).then(response => {

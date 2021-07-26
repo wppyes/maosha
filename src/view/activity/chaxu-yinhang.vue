@@ -1,6 +1,16 @@
 <template>
   <div class="prizeset boxright">
     <div class="filter-container">
+      <el-select
+        v-model="listQuery.type"
+        placeholder="选择类型"
+        clearable
+        style="width: 150px"
+        class="filter-item"
+      >
+        <el-option label="虚拟" value="1"></el-option>
+        <el-option label="实物" value="0"></el-option>
+      </el-select> 
       <el-input
         placeholder="请输入标题/手机号码/姓名"
         v-model="listQuery.title"
@@ -23,6 +33,11 @@
       <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">下载</el-button>   
     </div>
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row>
+      <el-table-column label="奖品类型" align="center">
+         <template slot-scope="scope">
+          <span>{{scope.row.Type==1?'虚拟':'实物'}}</span>          
+        </template>
+      </el-table-column>
       <el-table-column label="活动名称" align="center" prop="Prize"></el-table-column>
       <el-table-column label="收货人" align="center" prop="Name"></el-table-column>
       <el-table-column label="电话" align="center" prop="Phone"></el-table-column>
@@ -34,10 +49,14 @@
       <el-table-column label="物流名称" align="center" prop="LogisticsName">
       </el-table-column>
       <el-table-column label="物流单号" align="center" prop="LogisticsCode">
+      </el-table-column>      
+      <el-table-column label="卡密" align="center" prop="ExCode">
       </el-table-column>
-      <el-table-column label="时间" align="center" prop="CreateTimeStr">
-      </el-table-column>
-      <el-table-column label="发货时间" align="center" prop="UpdateTimeStr">
+      <el-table-column label="时间" align="center" prop="CreateTimeStr" width="180px">
+        <template slot-scope="scope">
+          <div>订单：{{scope.row.CreateTimeStr}}</div>    
+          <div>发货：{{scope.row.UpdateTimeStr}}</div>           
+        </template>
       </el-table-column>
       <!-- <el-table-column label="详情" align="center" prop="LogisticCode">
          <template slot-scope="scope">
@@ -77,7 +96,8 @@ export default {
         //搜素分页处理
         title: '',
         page: 1,
-        sum: 15
+        sum: 15,
+        type:''
       },
       time1:'',
       time2:'',

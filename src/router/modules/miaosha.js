@@ -87,6 +87,13 @@ const miaoshaRouter = {
       }
     },
     {
+      path: 'order-list-self',
+      component: () => import('@/view/miaosha/order-list-self'),
+      meta: {
+        title: '订单列表（自用）'
+      }
+    },
+    {
       path: 'wuliu-fafang',
       component: () => import('@/view/miaosha/wuliu-fafang'),
       meta: {
@@ -126,6 +133,13 @@ const miaoshaRouter = {
       component: () => import('@/view/miaosha/order-xuni'),
       meta: {
         title: '虚拟订单列表'
+      }
+    },
+    {
+      path: 'test',
+      component: () => import('@/view/miaosha/test'),
+      meta: {
+        title: 'test'
       }
     },
   ]
